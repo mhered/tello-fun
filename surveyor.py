@@ -4,6 +4,7 @@ import cv2
 from djitellopy import tello
 import keypress_module as kp
 import time
+import datetime
 
 
 def get_keyboard_input():
@@ -19,6 +20,10 @@ def get_keyboard_input():
 
     if kp.is_key_pressed('q'):
         drone.land()
+
+    if kp.is_key_pressed('p'):
+        cv2.imwrite(f'./assets/images/PIC{time.time()}.jpg', frame)
+        time.sleep(0.3)
 
     if kp.is_key_pressed('LEFT'):
         left_right = -speed
@@ -44,9 +49,19 @@ def get_keyboard_input():
 
 
 def process_frame(frame):
-    # resize & mirror
+    # resize
     frame_xs = cv2.resize(frame, (360, 240))
-    return frame_xs
+    # label
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    org = (10, 225)  # in pixels
+    font_scale = .4
+    color = (0, 255, 0)  # Green in BGR
+    thickness = 1  # in pixels
+    text = f"{datetime.datetime.now().isoformat(timespec='milliseconds')}                 BAT {drone.get_battery()}%"
+    frame_processed = cv2.putText(frame_xs, text, org, font,
+                                  font_scale, color, thickness, cv2.LINE_AA)
+
+    return frame_processed
 
 
 # initializations
@@ -55,9 +70,9 @@ kp.init()
 # tello drone
 drone = tello.Tello()
 drone.connect()
-print(drone.get_battery())
 # start streaming
 drone.streamon()
+global frame
 
 # main loop
 while True:
