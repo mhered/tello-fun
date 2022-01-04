@@ -121,8 +121,38 @@ We will use the [Pygame](https://www.pygame.org/news) library:
 
 `keypress_module.py` - implements `init()` and `is_key_pressed()` functions using `pygame`library
 
-`key-controls.py` -includes statement  `import keypress_module.py as kp` to use functions defined in the module.
+`key-controls.py` - includes statement  `import keypress_module.py as kp` to use functions defined in the module.
 
 Tested OK
 
-Note: Why this code does not work well with ESC key for landing?
+Note: Why this code does not work well with `ESC` key for landing?
+
+## `surveyor.py`- stream FPV, control the drone to move around and take pictures
+
+Combine `camera.py` and `key-controls.py`
+
+Add display of timestamp and battery level to streaming window
+
+Add option to take a picture and store with unique name in `./assets/images/`
+
+**Note: destination folder must exist beforehand otherwise the `cv2.imwrite` fails to save without giving any warning** 
+
+**Note: Why original version did not work?** Had to make a few changes to  `key-controls.py`
+
+**Note: Why this code does not work well with `SPACE` key for taking pictures?**
+
+
+
+Usage: 
+
+1.  Connect computer to the drone Wifi `TELLO_EFD008`, 
+2.  Launch `$ python ./surveyor.py` 
+3.  Wait for streaming window to show live image
+4. Click on pygame window so it gets focus and can listen to keystrokes
+5. Press `RETURN` to take off 
+6. Press `p`to take a picture, store with unique name in `./assets/images/`
+7. Press arrow keys to move the drone: `LEFT` `RIGHT`, forward (with `UP`) and backwards (with `DOWN`)
+8. Press `w` to climb and `s` to descend 
+9. Press `a` to rotate counterclockwise and `d` to rotate clockwise
+10. Press `q` to land
+11. `CTRL-c` to stop the program
