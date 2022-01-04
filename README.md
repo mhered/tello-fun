@@ -121,8 +121,14 @@ We will use the [Pygame](https://www.pygame.org/news) library:
 
 `keypress_module.py` - implements `init()` and `is_key_pressed()` functions using `pygame`library
 
-`key-controls.py` -includes statement  `import keypress_module.py as kp` to use functions defined in the module.
+`key-controls.py` - includes statement  `import keypress_module.py as kp` to use functions defined in the module.
 
 Tested OK
 
-Note: Why this code does not work well with ESC key for landing?
+Note: Why this code does not work well with `ESC` key for landing?
+
+## `surveyor.py`- stream FPV, control the drone to move around and take pictures
+
+Combines `camera.py` and `key-controls.py`
+
+**Note: Why original version did not work?** Had to make a few changes to  `key-controls.py`
