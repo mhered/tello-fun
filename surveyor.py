@@ -11,7 +11,7 @@ def get_keyboard_input():
     left_right = 0
     bk_fwd = 0
     down_up = 0
-    c_cc_yaw = 0
+    cc_c_yaw = 0
     speed = 50
 
     if kp.is_key_pressed('RETURN'):
@@ -36,20 +36,17 @@ def get_keyboard_input():
         down_up = speed
 
     if kp.is_key_pressed('d'):
-        c_cc_yaw = -speed
+        cc_c_yaw = speed
     elif kp.is_key_pressed('a'):
-        c_cc_yaw = speed
+        cc_c_yaw = -speed
 
-    return [left_right, bk_fwd, down_up, c_cc_yaw]
+    return [left_right, bk_fwd, down_up, cc_c_yaw]
 
 
 def process_frame(frame):
     # resize & mirror
     frame_xs = cv2.resize(frame, (360, 240))
-    frame_xs_flipped = cv2.flip(frame_xs, 1)
-    frame_processed = frame_xs_flipped
-
-    return frame_processed
+    return frame_xs
 
 
 # initializations
