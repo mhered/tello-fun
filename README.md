@@ -40,10 +40,10 @@ Note: within the virtual environment, you can use the command `pip` instead of `
 Install the DJITelloPy library (pulls also numpy & opencv):
 
 ```
-$ pip3 install djitellopy
+(myvenv)$ pip install djitellopy
 ```
 
-## check-battery.py - First connection 
+## `check-battery.py` - First connection 
 
 ```python
 #!/usr/bin/env python
@@ -69,7 +69,7 @@ $ sudo ufw status
 $ sudo ufw disable
 ```
 
-## basic-moves.py - Moving around
+## `basic-moves.py` - Moving around
 
 ```python
 #!/usr/bin/env python
@@ -107,3 +107,22 @@ sleep(1)
 drone.land()
 ```
 
+## `camera.py` - Streaming frames
+
+
+
+## `key-controls.py` - Controlling the drone with the computer keyboard
+
+We will use the [Pygame](https://www.pygame.org/news) library:
+
+```bash
+(myvenv)$ pip install pygame
+```
+
+`keypress_module.py` - implements `init()` and `is_key_pressed()` functions using `pygame`library
+
+`key-controls.py` -includes statement  `import keypress_module.py as kp` to use functions defined in the module.
+
+Tested OK
+
+Note: Why this code does not work well with ESC key for landing?
