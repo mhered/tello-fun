@@ -123,8 +123,6 @@ We will use the [Pygame](https://www.pygame.org/news) library:
 
 `key-controls.py` -includes statement  `import keypress_module.py as kp` to use functions defined in the module.
 
-Notes 02/12/22: 
+Tested OK
 
-* Not fully tested.
-
-* Why this code does not work well with ESC key for landing?
+Note: Why this code does not work well with ESC key for landing?
