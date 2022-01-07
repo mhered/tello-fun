@@ -5,6 +5,7 @@ from djitellopy import tello
 import keypress_module as kp
 import time
 import datetime
+from icon_overlay import icon_overlay
 
 
 def get_keyboard_input():
@@ -48,48 +49,67 @@ def get_keyboard_input():
     return [left_right, bk_fwd, down_up, cc_c_yaw]
 
 
-def process_frame(frame):
+def process_frame(frame, drone):
     # resize
-    frame_xs = cv2.resize(frame, (360, 240))
-    # label
+    frame = cv2.resize(frame, (360, 240))
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+
     font = cv2.FONT_HERSHEY_SIMPLEX
-    org = (10, 225)  # in pixels
-    font_scale = .4
-    color = (0, 255, 0)  # Green in BGR
+    font_scale = .35
     thickness = 1  # in pixels
-    text = f"{datetime.datetime.now().isoformat(timespec='milliseconds')}                 BAT {drone.get_battery()}%"
-    frame_processed = cv2.putText(frame_xs, text, org, font,
-                                  font_scale, color, thickness, cv2.LINE_AA)
+    color = (0, 255, 0)  # Green in BGR
 
-    return frame_processed
+    # battery
+    loc_bat = (290, 225)
+    text_bat = f"{drone.get_battery()}%"
+
+    bat_icon_url = './assets/icons/battery2.png'
+    ovl_bat = icon_overlay(bat_icon_url, 40,
+                           [201, 283], frame.shape, 1)
+
+    # frame[:, :, 3] = 1-ovl_bat[:, :, 3]
+    cv2.addWeighted(ovl_bat, 1.0, frame, 1.0, 0.0, frame)
+
+    frame = cv2.putText(frame, text_bat, loc_bat, font,
+                        font_scale, color, thickness, cv2.LINE_AA)
+
+    # datestamp
+    loc_date = (10, 225)  # in pixels
+    text_date = f"{datetime.datetime.now().isoformat(timespec='milliseconds')}"
+    frame = cv2.putText(frame, text_date, loc_date, font,
+                        font_scale, color, thickness, cv2.LINE_AA)
+
+    return frame
 
 
-# initializations
-# gamepy window to capture keystrokes
-kp.init()
-# tello drone
-drone = tello.Tello()
-drone.connect()
-# start streaming
-drone.streamon()
-global frame
+if __name__ == "__main__":
 
-# main loop
-while True:
-    # move drone
-    commands = get_keyboard_input()
+    # initializations
+    # gamepy window to capture keystrokes
+    kp.init()
+    # tello drone
+    drone = tello.Tello()
+    drone.connect()
+    # start streaming
+    drone.streamon()
+    global frame
 
-    drone.send_rc_control(
-        commands[0],
-        commands[1],
-        commands[2],
-        commands[3])
+    # main loop
+    while True:
+        # move drone
+        commands = get_keyboard_input()
 
-    # get frame
-    frame = drone.get_frame_read().frame
-    # display processed frame
-    cv2.imshow("Frame", process_frame(frame))
-    cv2.waitKey(1)
+        drone.send_rc_control(
+            commands[0],
+            commands[1],
+            commands[2],
+            commands[3])
 
-drone.streamoff()
-cv2.destroyAllWindows()
+        # get frame
+        frame = drone.get_frame_read().frame
+        # display processed frame
+        cv2.imshow("Frame", process_frame(frame, drone))
+        cv2.waitKey(1)
+
+    drone.streamoff()
+    cv2.destroyAllWindows()

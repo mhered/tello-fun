@@ -156,3 +156,31 @@ Usage:
 9. Press `a` to rotate counterclockwise and `d` to rotate clockwise
 10. Press `q` to land
 11. `CTRL-c` to stop the program
+
+## `face_track.py` - drone detects and tracks face with altitude and yaw
+
+Did not work downloading `haarcascade_frontalface_default.xml` from opencv github: https://github.com/opencv/opencv/tree/master/data/haarcascades. 
+
+Also could not find opencv:
+
+```bash
+(myvenv) mhered@mhered-laptop:~/tello$ which opencv
+(myvenv) mhered@mhered-laptop:~/tello$ whereis opencv
+opencv:
+(myvenv) mhered@mhered-laptop:~/tello$ opencv --v
+Command 'opencv' not found
+```
+
+however it was pulled by djitellopy, and I can detect it in python:
+
+```python
+>>>import cv2
+>>> print(cv2.__version__)
+4.5.5
+>>> print(cv2.data.haarcascades)
+/home/mhered/tello/myvenv/lib/python3.8/site-packages/cv2/data/
+```
+
+## `icon_overlay.py` - helper function to overlay icons on the live stream 
+
+Used in `frame_process()` to show the battery icon
