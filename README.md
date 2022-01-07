@@ -141,8 +141,6 @@ Add option to take a picture and store with unique name in `./assets/images/`
 
 **Note: Why this code does not work well with `SPACE` key for taking pictures?**
 
-
-
 Usage: 
 
 1.  Connect computer to the drone Wifi `TELLO_EFD008`, 
@@ -191,3 +189,8 @@ Two approaches tried, none satisfactory:
 * https://theailearner.com/tag/cv2-addweighted/ yields jagged edges
 * https://www.youtube.com/watch?v=dCSZvP5IAqc multiplies intensities in the two images rather than covering the background with the overlay
 * Pending: try this one https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079
+
+### TO DO: check out how to access raw video in this thread http://tellopilots.com/threads/tello-whats-possible.88/post-1021
+
+
+
