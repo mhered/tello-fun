@@ -159,9 +159,11 @@ Usage:
 
 ## `face_track.py` - drone detects and tracks face with altitude and yaw
 
-Did not work downloading `haarcascade_frontalface_default.xml` from opencv github: https://github.com/opencv/opencv/tree/master/data/haarcascades. 
+Inspired loosely on project 3 of [Murtaza's Drone Programming With Python video](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) but implemented simple bang-bang control instead of PID, and chose to yaw and control height instead of distance to target to avoid having the drone moving around the room. Idea from selfie air stick project: https://www.youtube.com/watch?v=RHRQoaqQIgo
 
-Also could not find opencv:
+Downloading `haarcascade_frontalface_default.xml` from opencv github: https://github.com/opencv/opencv/tree/master/data/haarcascades did not work.
+
+Also I could not find `opencv` from command line:
 
 ```bash
 (myvenv) mhered@mhered-laptop:~/tello$ which opencv
@@ -171,7 +173,7 @@ opencv:
 Command 'opencv' not found
 ```
 
-however it was pulled by djitellopy, and I can detect it in python:
+However it was pulled by `djitellopy`, and is detected in python:
 
 ```python
 >>>import cv2
@@ -184,3 +186,8 @@ however it was pulled by djitellopy, and I can detect it in python:
 ## `icon_overlay.py` - helper function to overlay icons on the live stream 
 
 Used in `frame_process()` to show the battery icon
+Two approaches tried, none satisfactory:
+
+* https://theailearner.com/tag/cv2-addweighted/ yields jagged edges
+* https://www.youtube.com/watch?v=dCSZvP5IAqc multiplies intensities in the two images rather than covering the background with the overlay
+* Pending: try this one https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079
