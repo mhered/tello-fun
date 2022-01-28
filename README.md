@@ -1,29 +1,37 @@
+# Tello fun
 
+Today I got a super present: the Tello drone. The Boost combo kit includes one drone, some spares, three batteries and a charger. The packaging is compact and effective, more functional than luxurious. The drone itself is beautifully finished, sporting a vision positioning system and onboard camera capable of 5 Mpixel shots and 720p live video streaming, as well as neat safety features such as propeller guards and a rubber landing gear. Flight time is about 13'.
 
-Today I got a super present: the Tello drone. The Boost combo kit includes one drone, some spares, three batteries and a charger. The packaging is compact and effective, more functional than luxurious.  The drone itself is beautifully finished, sporting a vision positioning system and onboard camera capable of 5Mpixel shots and 720p live video streaming, as well as neat safety features such as propeller guards and a rubber landing gear. Flight time is 13'
-
-I plugged the batteries to top them up. It took about 20' to see the solid green light, and I used this time to visit the [official Tello website](https://www.ryzerobotics.com/) and download the documentation and watch the [videos](https://www.ryzerobotics.com/tello/videos):
+I plugged the batteries to top them up. It took about 20' to see the solid green light, and I used this time to visit the [official Tello website](https://www.ryzerobotics.com/), watch some of the quickstart [videos](https://www.ryzerobotics.com/tello/videos) and download the documentation:
 
 * [Quick Start guide](https://dl-cdn.ryzerobotics.com/downloads/Tello/20180212/Tello+Quick+Start+Guide_V1.2+multi.pdf)
 * [User Manual](https://dl-cdn.ryzerobotics.com/downloads/Tello/20180404/Tello_User_Manual_V1.2_EN.pdf)
 * [Scratch README](https://terra-1-g.djicdn.com/2d4dce68897a46b19fc717f3576b7c6a/Tello 编程相关/For Tello/Scratch 0320 修改/Tello Scratch README 0320.pdf)
 * [Tello SDK](https://terra-1-g.djicdn.com/2d4dce68897a46b19fc717f3576b7c6a/Tello 编程相关/For Tello/Tello SDK Documentation EN_1.3_1122.pdf)
 
+## Why the Tello?
+
+* [A 2018 review of the Tello by Half Chrome (best beginner drone under 100$](https://www.youtube.com/watch?v=hpwrYP1_txY)
+
+* [Top 5 Best Programmable Drones In 2022: Make You Own Move](https://www.propelrc.com/best-programmable-drones/)
+
+* [Tello Drone in 2021 | Still Good?](): stability and image quality (not video)
+
+* [Top 5 accessories for Tello](https://www.youtube.com/watch?v=zOXkIOieFw8): get a wifi repeater (check setup videos for [TP Link N300 Wifi range extender]() or [Xiaomi Mi repeater](https://www.youtube.com/watch?v=gxOUK3c0bIE)) to improve video quality for 10€!
+
+## iOS app
+
 I installed the iOS app in my iphone. User reviews were a mixed bag but it was nice to see that after 3 years it keeps receiving updates.
 
-Press the button on the side to switch on, wait a few seconds for the LED to go flashing orange. The instructions are easy to follow: you need to connect your mobile to the Tello Wifi network and the first time activate 
+Press the button on the side to switch on, wait a few seconds for the LED to go flashing orange. The instructions are easy to follow: you need to connect your mobile to the Tello Wifi network and the first time activate (??) ...not sure what I was about to say... 
 
 First try the drone instead of hovering in place it slowly drifted until it bumped onto a book shelf... 
 
-Pretty active community in https://tellopilots.com/ and http://protello.com/ seems related to insufficient lighting.
+I searched the pretty active community in https://tellopilots.com/ and http://protello.com/ and learned this is probably related to insufficient lighting.
 
-Official support for Scratch but I have seen unofficial python [TelloPy library](https://github.com/hanyazou/TelloPy) and a [ROS driver](http://wiki.ros.org/tello_driver) etc.
+## Programming the Tello
 
-Also python modules in this repo: [Tello-Python](https://github.com/dji-sdk/Tello-Python)
-
-And the one from [DJITelloPy](https://github.com/damiafuentes/DJITelloPy) by damiafuentes, used in [this video by Murtaza](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) which started it all...
-
-[A 2018 review of the Tello by Half Chrome (best beginner drone under 100$](https://www.youtube.com/watch?v=hpwrYP1_txY)
+Thats where the real fun is. Official support is for Scratch but I there are plenty of community-developed alterantives: the iOS app [TelloFpv](https://apps.apple.com/us/app/tellofpv/id1545864950) a [ROS driver](http://wiki.ros.org/tello_driver), and unofficial python libraries such as [TelloPy library](https://github.com/hanyazou/TelloPy) , [Tello-Python](https://github.com/dji-sdk/Tello-Python) or [DJITelloPy](https://github.com/damiafuentes/DJITelloPy) by damiafuentes, used in [this video tutorial about drone programming by Murtaza](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s).
 
 ## Installations
 
@@ -157,7 +165,7 @@ Usage:
 
 ## `face_track.py` - drone detects and tracks face with altitude and yaw
 
-Inspired loosely on project 3 of [Murtaza's Drone Programming With Python video](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) but implemented simple bang-bang control instead of PID, and chose to yaw and control height instead of distance to target to avoid having the drone moving around the room. Idea from selfie air stick project: https://www.youtube.com/watch?v=RHRQoaqQIgo
+Inspired loosely on project 3 of [Murtaza's Drone Programming With Python video](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) but implemented simple bang-bang control instead of PID, and chose to yaw and control height instead of distance to target to avoid having the drone moving around the room. Idea from selfie air stick project: [repo](https://github.com/geaxgx/tello-openpose/blob/master/README.md) and [video](https://www.youtube.com/watch?v=RHRQoaqQIgo) and this [thread](https://tellopilots.com/threads/applying-computer-vision-techniques-to-tello.3804/).
 
 Downloading `haarcascade_frontalface_default.xml` from opencv github: https://github.com/opencv/opencv/tree/master/data/haarcascades did not work.
 
@@ -190,7 +198,14 @@ Two approaches tried, none satisfactory:
 * https://www.youtube.com/watch?v=dCSZvP5IAqc multiplies intensities in the two images rather than covering the background with the overlay
 * Pending: try this one https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079
 
-### TO DO: check out how to access raw video in this thread http://tellopilots.com/threads/tello-whats-possible.88/post-1021
+## `line-follower.py`
 
+Based on project 4 of  [Murtaza's Drone Programming With Python video](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) 
 
+## TO DO
 
+- [ ] fix `icon_overlay.py` 
+- [ ] check out how to access raw video in this thread http://tellopilots.com/threads/tello-whats-possible.88/post-1021
+- [ ] do `line-follower.py`
+- [ ] review and program `tello-openpose`: https://github.com/geaxgx/tello-openpose/blob/master/README.md
+- [ ] refactor to use ROS driver: 

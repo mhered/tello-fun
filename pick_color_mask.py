@@ -29,6 +29,8 @@ def pick_color_mask(video_stream,
     cv2.createTrackbar("VAL min", "Color Mask", lower_init[2], 255, empty)
     cv2.createTrackbar("VAL Max", "Color Mask", upper_init[2], 255, empty)
 
+    print("Select threshold values. Type 'q' to quit")
+
     while True:
         _, frame = video_stream.read()
 
