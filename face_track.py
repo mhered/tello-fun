@@ -33,7 +33,7 @@ def find_face(frame):
         return frame, [[0, 0], 0]
 
 
-def track_face(drone, face_data, frame_size, pid, p_error):
+def track_face(drone, face_data, frame_size):
 
     # (L/R, bk/fwd, up/down, clock/counterclock-wise yaw) each in -/+100%
     left_right = 0
@@ -111,7 +111,7 @@ if __name__ == "__main__":
             break
 
         frame, face_data = find_face(frame)
-        commands = track_face(0, face_data, frame.shape[:2], 0, 0)
+        commands = track_face(0, face_data, frame.shape[:2])
         if source == "TELLO":
             drone.send_rc_control(
                 commands[0],
