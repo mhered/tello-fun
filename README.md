@@ -202,10 +202,33 @@ Two approaches tried, none satisfactory:
 
 Based on project 4 of  [Murtaza's Drone Programming With Python video](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) 
 
+Rotation:
+
+| LH sensor | Center sensor | RH sensor | Action |
+| - | - | - | - |
+| 0 | 1 | 0 | move fwd |
+| 1 | 1 | 0 | slight turn left |
+| 1 | 0 | 0 | strong turn left |
+| 0 | 1 | 1 | slight turn right |
+| 0 | 0 | 1 | strong turn right |
+| 0 | 0 | 0 | stop |
+| 1 | 0 | 1 | stop |
+| 1 | 1 | 1 | stop |
+
+Translation: PID to keep line centered in the image
+
+
+
 ## TO DO
 
 - [ ] fix `icon_overlay.py` 
+
 - [ ] check out how to access raw video in this thread http://tellopilots.com/threads/tello-whats-possible.88/post-1021
+
 - [ ] do `line-follower.py`
+
 - [ ] review and program `tello-openpose`: https://github.com/geaxgx/tello-openpose/blob/master/README.md
+
 - [ ] refactor to use ROS driver: 
+
+   
