@@ -3,6 +3,9 @@
 import cv2
 import numpy as np
 
+global isframe
+isframe = False
+
 
 def empty(args):
     pass
@@ -18,6 +21,14 @@ def pick_color_mask(video_stream,
 
     frame_width = int(video_stream.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(video_stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    # MH if single frame:
+    if isframe:
+        frame = cv2.imread('./assets/data/IMG_7732_xs.PNG')
+        frame_width = 480
+        frame_height = 360
+        frame = cv2.resize(frame, (frame_width, frame_height))
+
     print("width:", frame_width)
     print("height:", frame_height)
     cv2.namedWindow("Color Mask", cv2.WINDOW_NORMAL)
@@ -32,10 +43,12 @@ def pick_color_mask(video_stream,
     print("Select threshold values. Type 'q' to quit")
 
     while True:
-        _, frame = video_stream.read()
+        if isframe:
+            pass
+        else:
+            _, frame = video_stream.read()
 
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
         h_min = cv2.getTrackbarPos("HUE min", "Color Mask")
         h_max = cv2.getTrackbarPos("HUE Max", "Color Mask")
         s_min = cv2.getTrackbarPos("SAT min", "Color Mask")
