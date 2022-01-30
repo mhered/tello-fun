@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 global isframe
-isframe = False
+isframe = True
 
 
 def empty(args):
