@@ -67,12 +67,12 @@ lower_threshold, upper_threshold = pick_color_mask(video_stream,
 print("lower_threshold = ", lower_threshold)
 print("upper_threshold = ", upper_threshold)
 
-sensors = 3
-threshold_value = .20
-trans_gain = .33  # the higher the more sensitive
-rota_gain = [-25, -15, 0, 15, 25]
+SENSORS = 3
+THRESHOLD = .20
+TRANS_GAIN = .33  # the higher the more sensitive
+ROTA_VALS = [-25, -15, 0, 15, 25]
 yaw = 0
-fwd_speed = 15
+FWD_SPEED = 15
 
 # Functions definition
 
@@ -100,15 +100,15 @@ def get_contours(mask, frame):
     return cx
 
 
-def get_sensor_output(mask, sensors):
-    # Note: hsplit only works if frame_width is divisible by sensors
-    areas = np.hsplit(mask, sensors)
+def get_sensor_output(mask, SENSORS):
+    # Note: hsplit only works if frame_width is divisible by SENSORS
+    areas = np.hsplit(mask, SENSORS)
 
-    pix_total = areas[0].shape[0]*areas[0].shape[1]//sensors
+    pix_total = areas[0].shape[0]*areas[0].shape[1]//SENSORS
     sens_out = []
     for i, area in enumerate(areas):
         pix_count = cv2.countNonZero(area)
-        if pix_count > threshold_value * pix_total:
+        if pix_count > THRESHOLD * pix_total:
             sens_out.append(1)
             win_title = str(i)+": 1"
         else:
@@ -122,24 +122,27 @@ def get_sensor_output(mask, sensors):
 def send_commands(sens_out, cx):
     global curve
     # translation
-    left_right = (cx - frame_width/2) * trans_gain
+    left_right = (cx - frame_width/2) * TRANS_GAIN
     left_right = int(np.clip(left_right, -10, 10))
     if left_right > -2 and left_right < 2:
         left_right = 0
 
     # rotation
+    fwd_speed = FWD_SPEED
     if sens_out == [1, 0, 0]:
-        yaw = rota_gain[0]
+        yaw = ROTA_VALS[0]
     elif sens_out == [1, 1, 0]:
-        yaw = rota_gain[1]
+        yaw = ROTA_VALS[1]
     elif sens_out == [0, 1, 0]:
-        yaw = rota_gain[2]
+        yaw = ROTA_VALS[2]
+        fwd_speed = 0
     elif sens_out == [0, 1, 1]:
-        yaw = rota_gain[3]
+        yaw = ROTA_VALS[3]
     elif sens_out == [0, 0, 1]:
-        yaw = rota_gain[4]
+        yaw = ROTA_VALS[4]
     else:
         yaw = 0
+        fwd_speed = 0
 
     drone.send_rc_control(left_right, fwd_speed, 0, yaw)
 
@@ -159,7 +162,7 @@ while True:
 
     mask = thresholding(frame, lower_threshold, upper_threshold)
     cx = get_contours(mask, frame)  # for translation
-    sens_out = get_sensor_output(mask, sensors)  # for rotation
+    sens_out = get_sensor_output(mask, SENSORS)  # for rotation
     send_commands(sens_out, cx)
 
     # show images
