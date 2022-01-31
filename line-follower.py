@@ -3,76 +3,11 @@
 import cv2
 import numpy as np
 
-from pick_color_mask import pick_color_mask
-
 from djitellopy import tello
+from pick_color_mask import pick_color_mask, get_frame
 
-# Initialization
-# drone
-
-drone = tello.Tello()
-drone.connect()
-
-# Explore library in:
-# ./myvenv/lib/python3.8/site-packages/djitellopy/tello.py
-
-print(drone.get_battery())
-
-drone.streamon()
-drone.takeoff()
-
-# variables
-
-# isframe True for testing on still photos
-# False to run on stream from video source
-
-global isframe
-isframe = True
-
-# reduced size of images for processing
-global frame_width, frame_height
-frame_width = 480
-frame_height = 360
-
-# video source
-# list available cameras with:
-# $ v4l2-ctl --list-devices
-# USB camera on laptop: '/dev/video2'
-# integrated laptop cam: 0
-video_stream = cv2.VideoCapture('/dev/video2')
-video_stream = cv2.VideoCapture(0)
-
-# color thresholds
-
-# add an env file to store the values in XML?
-# read values from XML and run color calibration
-# only on request or if XML params not present
-global lower_threshold, upper_threshold
-lower_threshold = [0, 0, 0]
-upper_threshold = [255, 255, 255]
-
-# picked manually
-# values for Cossio
-lower_threshold = [85, 13, 177]
-upper_threshold = [108, 97, 223]
-# values for Durruti
-lower_threshold = [25, 10, 179]
-upper_threshold = [117,  54, 255]
-
-# Call pick_color_mask to fine-tune initial values
-lower_threshold, upper_threshold = pick_color_mask(video_stream,
-                                                   lower_threshold,
-                                                   upper_threshold)
-# display final values
-print("lower_threshold = ", lower_threshold)
-print("upper_threshold = ", upper_threshold)
-
-SENSORS = 3
-THRESHOLD = .20
-TRANS_GAIN = .33  # the higher the more sensitive
-ROTA_VALS = [-25, -15, 0, 15, 25]
-yaw = 0
-FWD_SPEED = 15
+import os
+from time import sleep
 
 # Functions definition
 
@@ -120,7 +55,7 @@ def get_sensor_output(mask, SENSORS):
 
 
 def send_commands(sens_out, cx):
-    global curve
+    global TRANS_GAIN, ROTA_GAIN, FWD_SPEED
     # translation
     left_right = (cx - frame_width/2) * TRANS_GAIN
     left_right = int(np.clip(left_right, -10, 10))
@@ -147,28 +82,118 @@ def send_commands(sens_out, cx):
     drone.send_rc_control(left_right, fwd_speed, 0, yaw)
 
 
-# main loop
-while True:
+def countdown(n):
+    os.system('spd-say "Stand by"')
+    sleep(2)
+    for i in range(n):
+        msg = f'spd-say "{str(n-i)}"'
+        os.system(msg)
+        sleep(1)
+    os.system('spd-say "Take off!"')
+    sleep(1)
 
-    # get frame
-    if isframe:
-        frame = cv2.imread('./assets/data/IMG_7733_xs.PNG')
+
+if __name__ == "__main__":
+
+    # Initialization of variables
+
+    # reduced size of images for processing
+    frame_width = 360
+    frame_height = 240
+
+    THRESHOLD = .20  # % of detection in area to set to 1
+    TRANS_GAIN = .33  # translation gain, the higher the more sensitive
+    SENSORS = 3  # number of areas for track sensing
+    ROTA_VALS = [-25, -15, 0, 15, 25]  # rotation gain, match with SENSORS
+    FWD_SPEED = 15  # default fwd speed
+
+    # video_source = "STATIC" for testing on still photos
+    # video_source = "WEBCAM" for testing on stream from video source
+    # video_source = "DRONE" for testing on Tello drone
+
+    video_source = "DRONE"
+
+    # Initialization
+    global drone, video_stream, IMAGE_PATH
+
+    if video_source == "WEBCAM":
+        # list of available cameras with:
+        # $ v4l2-ctl --list-devices
+        # USB camera on laptop: '/dev/video2'
+        # integrated laptop cam: 0
+        video_stream = cv2.VideoCapture('/dev/video2')
+        video_stream = cv2.VideoCapture(0)
+
+    elif video_source == "DRONE":
+        drone = tello.Tello()
+        drone.connect()
+        print(drone.get_battery())
+        drone.streamon()
+
+    elif video_source == "STATIC":
+        IMAGE_PATH = './assets/data/IMG_7733_xs.PNG'
+
     else:
-        frame = drone.get_frame_read().frame
+        print(f"Video Source: {video_source} not recognized.")
 
-    # resize
-    frame = cv2.resize(frame, (frame_width, frame_height))
-    frame = cv2.flip(frame, 0)  # flip vertically to avoid mirror effect
+    # color thresholds
 
-    mask = thresholding(frame, lower_threshold, upper_threshold)
-    cx = get_contours(mask, frame)  # for translation
-    sens_out = get_sensor_output(mask, SENSORS)  # for rotation
-    send_commands(sens_out, cx)
+    # add an env file to store the values in XML?
+    # read values from XML and run color calibration
+    # only on request or if XML params not present
+    # HSV values for no filter
+    """
+    lower_threshold = [0, 0, 0]
+    upper_threshold = [179, 255, 255]
+    """
 
-    # show images
-    cv2.imshow("Output", frame)
-    cv2.imshow("Mask", mask)
-    if cv2.waitKey(10) & 0xFF == ord('q'):
-        break
-    drone.streamoff()
-    cv2.destroyAllWindows()
+    # picked manually
+    # HSV values for Cossio
+    """
+    lower_threshold = [85, 13, 177]
+    upper_threshold = [108, 97, 223]
+    """
+
+    # HSV values for Durruti
+    lower_threshold = [25, 10, 179]
+    upper_threshold = [117,  54, 255]
+
+    # Call pick_color_mask to fine-tune initial values
+    lower_threshold, upper_threshold = pick_color_mask(
+        video_source, (frame_width, frame_height),
+        lower_threshold, upper_threshold)
+
+    # display final values
+    print("lower_threshold = ", lower_threshold)
+    print("upper_threshold = ", upper_threshold)
+
+    if video_source == "DRONE":
+        countdown(5)
+        drone.takeoff()
+
+    # main loop
+    while True:
+
+        # get frame
+        frame = get_frame(video_source)
+
+        # resize
+        frame = reduce_frame(frame, frame_size)
+        frame_width, frame_height, _ = frame.shape
+
+        mask = thresholding(frame, lower_threshold, upper_threshold)
+        cx = get_contours(mask, frame)  # for translation
+        sens_out = get_sensor_output(mask, SENSORS)  # for rotation
+        send_commands(sens_out, cx)
+
+        # show images
+        cv2.imshow("Output", frame)
+        cv2.imshow("Mask", mask)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+        if video_source == "DRONE":
+            drone.land
+            drone.streamoff()
+            drone.end()
+        cv2.destroyAllWindows()
