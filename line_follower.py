@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 from djitellopy import tello
-from pick_color_mask import pick_color_mask, get_frame
+from pick_color_mask import pick_color_mask, get_frame, reduce_frame
 
 import os
 from time import sleep
@@ -22,15 +22,18 @@ def get_contours(mask, frame):
     GREEN = (0, 255, 0)
     PINK = (255, 0, 255)
     RED = (0, 0, 255)
+
+    cx = 0
     contours, hierarchy = cv2.findContours(
         mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    largest_area_detected = max(contours, key=cv2.contourArea)
-    x_r, y_r, w_r, h_r = cv2.boundingRect(largest_area_detected)
-    cx = x_r + w_r//2
-    cy = y_r + h_r//2
-    cv2.drawContours(frame, largest_area_detected, -1, PINK, 3)
-    cv2.circle(frame, (cx, cy), 5, GREEN, cv2.FILLED)
-    cv2.rectangle(frame, (x_r, y_r), (x_r+w_r, y_r+h_r), RED, 2)
+    if len(contours) != 0:
+        largest_area_detected = max(contours, key=cv2.contourArea)
+        x_r, y_r, w_r, h_r = cv2.boundingRect(largest_area_detected)
+        cx = x_r + w_r//2
+        cy = y_r + h_r//2
+        cv2.drawContours(frame, largest_area_detected, -1, PINK, 3)
+        cv2.circle(frame, (cx, cy), 5, GREEN, cv2.FILLED)
+        cv2.rectangle(frame, (x_r, y_r), (x_r+w_r, y_r+h_r), RED, 2)
 
     return cx
 
@@ -114,8 +117,6 @@ if __name__ == "__main__":
     video_source = "DRONE"
 
     # Initialization
-    global drone, video_stream, IMAGE_PATH
-
     if video_source == "WEBCAM":
         # list of available cameras with:
         # $ v4l2-ctl --list-devices
@@ -123,16 +124,16 @@ if __name__ == "__main__":
         # integrated laptop cam: 0
         video_stream = cv2.VideoCapture('/dev/video2')
         video_stream = cv2.VideoCapture(0)
-
+        video_link = video_stream
     elif video_source == "DRONE":
         drone = tello.Tello()
         drone.connect()
-        print(drone.get_battery())
+        print(f"Battery: {drone.get_battery()}%")
         drone.streamon()
-
+        video_link = drone
     elif video_source == "STATIC":
         IMAGE_PATH = './assets/data/IMG_7733_xs.PNG'
-
+        video_link = IMAGE_PATH
     else:
         print(f"Video Source: {video_source} not recognized.")
 
@@ -155,12 +156,17 @@ if __name__ == "__main__":
     """
 
     # HSV values for Durruti
+    """
     lower_threshold = [25, 10, 179]
     upper_threshold = [117,  54, 255]
+    """
+    # HSV values from Tello for Durruti - night
+    lower_threshold = [94,   0, 189]
+    upper_threshold = [179, 255, 255]
 
     # Call pick_color_mask to fine-tune initial values
     lower_threshold, upper_threshold = pick_color_mask(
-        video_source, (frame_width, frame_height),
+        video_source, video_link, (frame_width, frame_height),
         lower_threshold, upper_threshold)
 
     # display final values
@@ -175,7 +181,7 @@ if __name__ == "__main__":
     while True:
 
         # get frame
-        frame = get_frame(video_source)
+        frame = get_frame(video_source, video_link)
 
         # resize
         frame = reduce_frame(frame, frame_size)
