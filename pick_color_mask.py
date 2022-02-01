@@ -3,34 +3,45 @@
 import cv2
 import numpy as np
 
-global isframe
-isframe = True
+from djitellopy import tello
 
 
 def empty(args):
     pass
 
 
-def pick_color_mask(video_stream,
+def reduce_frame(img, desired_shape):
+    scale_percent = min(
+        desired_shape[0]/img.shape[0], desired_shape[1]/img.shape[1])
+    width = int(img.shape[1] * scale_percent / 100)
+    height = int(img.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    resized_img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    return resized_img
+
+
+def pick_color_mask(video_source, video_link, frame_size=-1,
                     lower_init=[0, 0, 0],
-                    upper_init=[179, 255, 255], ):
-    """ pick_color_mask(video_stream, *lower_init, *upper_init)
+                    upper_init=[179, 255, 255]):
+    """ pick_color_mask(*video_source, *lower_init, *upper_init, *frame_size)
         Select interactively HSV thresholds to mask image by color.
         Returns lower_threshold, upper_threshold to use with cv2.inRange()
-        Optional arguments: starting value of thresholds"""
+        Optional arguments:
+        - video_source: "WEBCAM", "DRONE" or "STATIC". Default "WEBCAM"
+        - frame_size: desired (width, height) to process smaller images.
+          Default -1 to process full frame size of video feed
+        - lower_init, upper_init: starting value of thresholds
 
-    frame_width = int(video_stream.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(video_stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        """
 
-    # MH if single frame:
-    if isframe:
-        frame = cv2.imread('./assets/data/IMG_7732_xs.PNG')
-        frame_width = 480
-        frame_height = 360
-        frame = cv2.resize(frame, (frame_width, frame_height))
+    frame = get_frame(video_source, video_link)
+    if frame_size == -1:
+        frame_width, frame_height, _ = frame.shape
+        frame_size = (frame_width, frame_height)
+    else:
+        frame = reduce_frame(frame, frame_size)
+        frame_width, frame_height, _ = frame.shape
 
-    print("width:", frame_width)
-    print("height:", frame_height)
     cv2.namedWindow("Color Mask", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Color Mask", 3*frame_width+60, frame_height+200)
     cv2.createTrackbar("HUE min", "Color Mask", lower_init[0], 179, empty)
@@ -43,10 +54,7 @@ def pick_color_mask(video_stream,
     print("Select threshold values. Type 'q' to quit")
 
     while True:
-        if isframe:
-            pass
-        else:
-            _, frame = video_stream.read()
+        frame = get_frame(video_source, video_link)
 
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         h_min = cv2.getTrackbarPos("HUE min", "Color Mask")
@@ -74,31 +82,70 @@ def pick_color_mask(video_stream,
     return lower_threshold, upper_threshold
 
 
+def get_frame(video_source, video_link):
+
+    if video_source == "DRONE":
+        drone = video_link
+        frame = drone.get_frame_read().frame
+        frame = cv2.flip(frame, 0)  # flip vertically to avoid mirror effect
+
+    elif video_source == "WEBCAM":
+        video_stream = video_link
+        _, frame = video_stream.read()
+
+    elif video_source == "STATIC":
+        IMAGE_PATH = video_link
+        frame = cv2.imread(IMAGE_PATH)
+
+    else:
+        print(f"Video Source: {video_source} not recognized.")
+
+    return frame
+
+
 if __name__ == "__main__":
 
     # Create video stream before calling
+    # (Choose one)
 
-    # use video from webcam
+    """
+    # A) use static img
+    video_source = "STATIC"
+    IMAGE_PATH = './assets/data/IMG_7733_xs.PNG'
+    video_link = IMAGE_PATH
+
+
+    # B) use video from integrated webcam
+    video_source = "WEBCAM"
     video_stream = cv2.VideoCapture(0)
+    video_link = video_stream
 
-    # reduce size (optional)
-    width = 320
-    height = 240
-    video_stream.set(3, width)
-    video_stream.set(4, height)
+    """
+    # C) use drone video stream
+    video_source = "DRONE"
+    drone = tello.Tello()
+    drone.connect()
+    drone.streamon()
+    video_link = drone
 
     # Call pick_color_mask without initial values
-    lower_threshold, upper_threshold = pick_color_mask(video_stream)
+    lower_threshold, upper_threshold = pick_color_mask(
+        video_source, video_link)
 
     print("lower limits:", lower_threshold)
     print("upper limits:", upper_threshold)
 
     # Alternative: call pick_color_mask with initial values
-    lower_threshold, upper_threshold = pick_color_mask(video_stream,
-                                                       lower_threshold,
-                                                       upper_threshold)
+    lower_threshold, upper_threshold = pick_color_mask(
+        video_source, video_link,
+        (320, 240), lower_threshold, upper_threshold)
     print("lower limits:", lower_threshold)
     print("upper limits:", upper_threshold)
 
-    # Release video stream after calling
-    video_stream.release()
+    # Release video stream after call
+    if video_source == "WEBCAM":
+        video_stream.release()
+    elif video_source == "DRONE":
+        drone.streamoff()
+
+    cv2.destroyAllWindows()
