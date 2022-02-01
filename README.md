@@ -198,7 +198,7 @@ Two approaches tried, none satisfactory:
 * https://www.youtube.com/watch?v=dCSZvP5IAqc multiplies intensities in the two images rather than covering the background with the overlay
 * Pending: try this one https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079
 
-## `line-follower.py`
+## `line_follower.py`
 
 Based on project 4 of  [Murtaza's Drone Programming With Python video](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) 
 
