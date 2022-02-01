@@ -225,7 +225,7 @@ Translation: PID to keep line centered in the image
 
 - [ ] check out how to access raw video in this thread http://tellopilots.com/threads/tello-whats-possible.88/post-1021
 
-- [ ] do `line-follower.py`
+- [ ] do `line_follower.py`
 
 - [ ] review and program `tello-openpose`: https://github.com/geaxgx/tello-openpose/blob/master/README.md
 
