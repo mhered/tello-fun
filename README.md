@@ -51,7 +51,7 @@ Install the DJITelloPy library (pulls also numpy & opencv):
 (myvenv)$ pip install djitellopy
 ```
 
-## `check-battery.py` - First connection 
+## `check_battery.py` - First connection 
 
 ```python
 #!/usr/bin/env python
@@ -77,7 +77,7 @@ $ sudo ufw status
 $ sudo ufw disable
 ```
 
-## `basic-moves.py` - Moving around
+## `basic_moves.py` - Moving around
 
 ```python
 #!/usr/bin/env python
@@ -119,7 +119,7 @@ drone.land()
 
 
 
-## `key-controls.py` - Controlling the drone with the computer keyboard
+## `key_controls.py` - Controlling the drone with the computer keyboard
 
 We will use the [Pygame](https://www.pygame.org/news) library:
 
@@ -129,7 +129,7 @@ We will use the [Pygame](https://www.pygame.org/news) library:
 
 `keypress_module.py` - implements `init()` and `is_key_pressed()` functions using `pygame`library
 
-`key-controls.py` - includes statement  `import keypress_module.py as kp` to use functions defined in the module.
+`key_controls.py` - includes statement  `import keypress_module.py as kp` to use functions defined in the module.
 
 Tested OK
 
@@ -137,7 +137,7 @@ Note: Why this code does not work well with `ESC` key for landing?
 
 ## `surveyor.py`- stream FPV, control the drone to move around and take pictures
 
-Combine `camera.py` and `key-controls.py`
+Combine `camera.py` and `key_controls.py`
 
 Add display of timestamp and battery level to streaming window
 
@@ -145,7 +145,7 @@ Add option to take a picture and store with unique name in `./assets/images/`
 
 **Note: destination folder must exist beforehand otherwise the `cv2.imwrite` fails to save without giving any warning** 
 
-**Note: Why original version did not work?** Had to make a few changes to  `key-controls.py`
+**Note: Why original version did not work?** Had to make a few changes to  `key_controls.py`
 
 **Note: Why this code does not work well with `SPACE` key for taking pictures?**
 
@@ -198,7 +198,7 @@ Two approaches tried, none satisfactory:
 * https://www.youtube.com/watch?v=dCSZvP5IAqc multiplies intensities in the two images rather than covering the background with the overlay
 * Pending: try this one https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079
 
-## `line-follower.py`
+## `line_follower.py`
 
 Based on project 4 of  [Murtaza's Drone Programming With Python video](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s) 
 
@@ -229,6 +229,6 @@ Translation: PID to keep line centered in the image
 
 - [ ] review and program `tello-openpose`: https://github.com/geaxgx/tello-openpose/blob/master/README.md
 
-- [ ] refactor to use ROS driver: 
+- [ ] refactor to use ROS driver
 
    
