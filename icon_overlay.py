@@ -10,7 +10,7 @@ def icon_overlay(icon_url, icon_size, icon_position, frame_shape, color):
     Read icon from `icon_url`, resize it to `icon_size`,
     recolor it to `color` and place it in position `pos`
     in a transparent overlay of size `frame_shape`.
-    Return an image of size frame_shape in BGRA format (4 channels).
+    Return an image of size `frame_shape` in BGRA format (4 channels).
     """
 
     # load icon as BGRA
