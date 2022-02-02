@@ -192,11 +192,17 @@ However it was pulled by `djitellopy`, and is detected in python:
 ## `icon_overlay.py` - helper function to overlay icons on the live stream 
 
 Used in `frame_process()` to show the battery icon
-Two approaches tried, none satisfactory:
+After trying unsuccessfully two approaches ([this one yields jagged edges](https://theailearner.com/tag/cv2-addweighted/ ) and [this one multiplies intensities in the two images rather than covering the background with the overlay](https://www.youtube.com/watch?v=dCSZvP5IAqc), I finally settled for [this approach](https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079)
 
-* https://theailearner.com/tag/cv2-addweighted/ yields jagged edges
-* https://www.youtube.com/watch?v=dCSZvP5IAqc multiplies intensities in the two images rather than covering the background with the overlay
-* Pending: try this one https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079
+I failed to automate the conversion of `svg` images to `png` preserving the alpha channel. Either it is not proprly installed or not accessible from the virtual environment (myvenv)  **Check!!**. 
+
+After some frustration I just repeated the conversion of `svg` icons to `png`using GIMP:
+
+Open -> Set density to 90pix/cm, size to 100x100 pix. 
+
+Color-> Invert
+
+File -> Export -> Select File Type (by Extension) -> PNG image -> Export -> Export
 
 ## `line_follower.py`
 
@@ -221,14 +227,8 @@ Translation: PID to keep line centered in the image
 
 ## TO DO
 
-- [ ] fix `icon_overlay.py` 
-
-- [ ] check out how to access raw video in this thread http://tellopilots.com/threads/tello-whats-possible.88/post-1021
-
+- [x] fix `icon_overlay.py` 
 - [ ] do `line_follower.py`
-
 - [ ] review and program `tello-openpose`: https://github.com/geaxgx/tello-openpose/blob/master/README.md
-
 - [ ] refactor to use ROS driver
-
-   
+- [ ] check out how to access raw video in this thread http://tellopilots.com/threads/tello-whats-possible.88/post-1021
