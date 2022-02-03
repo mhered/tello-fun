@@ -137,7 +137,7 @@ Note: Why this code does not work well with `ESC` key for landing?
 
 ## `surveyor.py`- stream FPV, control the drone to move around and take pictures
 
-Combine `camera.py` and `key_controls.py`
+Combine `camera.py`, `key_controls.py` and `icon_overlay.py`
 
 Add display of timestamp and battery level to streaming window
 
@@ -151,17 +151,29 @@ Add option to take a picture and store with unique name in `./assets/images/`
 
 Usage: 
 
-1.  Connect computer to the drone Wifi `TELLO_EFD008`, 
-2.  Launch `$ python ./surveyor.py` 
-3.  Wait for streaming window to show live image
+1. Connect computer to the drone Wifi `TELLO_EFD008`, 
+
+2. Launch `$ python ./surveyor.py` 
+
+3. Wait for streaming window to show live image
+
 4. Click on pygame window so it gets focus and can listen to keystrokes
+
 5. Press `RETURN` to take off 
+
 6. Press `p`to take a picture, store with unique name in `./assets/images/`
+
 7. Press arrow keys to move the drone: `LEFT` `RIGHT`, forward (with `UP`) and backwards (with `DOWN`)
+
 8. Press `w` to climb and `s` to descend 
+
 9. Press `a` to rotate counterclockwise and `d` to rotate clockwise
+
 10. Press `q` to land
+
 11. `CTRL-c` to stop the program
+
+Includes `process_frame()`to resize and superimpose battery icon with status and a timestamp in the camera feed
 
 ## `face_track.py` - drone detects and tracks face with altitude and yaw
 
@@ -194,7 +206,7 @@ However it was pulled by `djitellopy`, and is detected in python:
 Used in `frame_process()` to show the battery icon
 After trying unsuccessfully two approaches ([this one yields jagged edges](https://theailearner.com/tag/cv2-addweighted/ ) and [this one multiplies intensities in the two images rather than covering the background with the overlay](https://www.youtube.com/watch?v=dCSZvP5IAqc), I finally settled for [this approach](https://stackoverflow.com/questions/36921496/how-to-join-png-with-alpha-transparency-in-a-frame-in-realtime/37198079#37198079)
 
-I failed to automate the conversion of `svg` images to `png` preserving the alpha channel. Either it is not proprly installed or not accessible from the virtual environment (myvenv)  **Check!!**. 
+Note: I failed to automate the conversion of `svg` images to `png` preserving the alpha channel. Either it is not proprly installed or not accessible from the virtual environment (myvenv)  **Check!!**. 
 
 After some frustration I just repeated the conversion of `svg` icons to `png`using GIMP:
 

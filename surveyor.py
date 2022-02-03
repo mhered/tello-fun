@@ -52,29 +52,26 @@ def get_keyboard_input():
 def process_frame(frame, drone):
     # resize
     frame = cv2.resize(frame, (360, 240))
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = .35
     thickness = 1  # in pixels
-    color = (0, 255, 0)  # Green in BGR
+    color = (0.0, 255.0, 255.0)  # Yellow in BGR
 
-    # battery
-    loc_bat = (290, 225)
+    # battery status
+    loc_bat = (290, 223)
     text_bat = f"{drone.get_battery()}%"
 
-    bat_icon_url = './assets/icons/battery2.png'
-    ovl_bat = icon_overlay(bat_icon_url, 40,
-                           [201, 283], frame.shape, 1)
-
-    # frame[:, :, 3] = 1-ovl_bat[:, :, 3]
-    cv2.addWeighted(ovl_bat, 1.0, frame, 1.0, 0.0, frame)
+    battery_icon = cv2.imread('./assets/icons/battery.png', -1)
+    frame = icon_overlay(frame, battery_icon,
+                         [200, 283], color, [40, 40])
 
     frame = cv2.putText(frame, text_bat, loc_bat, font,
                         font_scale, color, thickness, cv2.LINE_AA)
 
     # datestamp
-    loc_date = (10, 225)  # in pixels
+    loc_date = (10, 223)  # in pixels
     text_date = f"{datetime.datetime.now().isoformat(timespec='milliseconds')}"
     frame = cv2.putText(frame, text_date, loc_date, font,
                         font_scale, color, thickness, cv2.LINE_AA)

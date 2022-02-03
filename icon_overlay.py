@@ -4,30 +4,40 @@ import cv2
 import numpy as np
 
 
-def icon_overlay(icon_url, icon_size, icon_position, frame_shape, color):
+def icon_overlay(frame, icon, icon_position=(0, 0), color=False, icon_size=False):
     """
-    icon_overlay(icon_url, icon_size, icon_position, frame_shape, color)
-    Read icon from `icon_url`, resize it to `icon_size`,
-    recolor it to `color` and place it in position `pos`
-    in a transparent overlay of size `frame_shape`.
-    Return an image of size `frame_shape` in BGRA format (4 channels).
+    `frame = icon_overlay(frame, icon, icon_position=(x,y), color, icon_size=(h,w))`
+    assume `icon` is BGRA format (4 channels)
+    if provided, resize it to `icon_size` and recolor it to `color`
+    and place it in position `pos` (defaults to (0,0))
+    in a transparent overlay of size `frame.shape`.
+    Return blend of this overlay with `frame` in BGRA format (4 channels).
     """
 
-    # load icon as BGRA
-    icon = cv2.imread(icon_url, -1)
+    # assume icon is BGRA
     # resize
-    icon = cv2.resize(icon, (icon_size, icon_size))
+    if icon_size is False:
+        pass
+    else:
+        icon = cv2.resize(icon, (icon_size[1], icon_size[0]))
+
     # tint icon
-    icon = recolor_BGRA(icon, color)
+    if color is False:
+        pass
+    else:
+        color = 1/255.0*np.asarray([color[0], color[1], color[2]])
+        icon = recolor_BGRA(icon, color)
 
     # position
     icon_x, icon_y = icon_position
-    icon_w, icon_h, _ = icon.shape
-    w, h, _ = frame_shape
-    overlay = np.zeros((w, h, 4), dtype='uint8')
-    overlay[icon_x:icon_x+icon_w, icon_y:icon_y+icon_h, :] = icon
+    icon_h, icon_w, _ = icon.shape
+    h, w, _ = frame.shape
+    overlay = np.zeros((h, w, 4), dtype='uint8')
+    overlay[icon_x:icon_x+icon_h, icon_y:icon_y+icon_w, :] = icon
 
-    return overlay
+    frame = blend_transparent(overlay, frame)
+
+    return frame
 
 
 def recolor_BGRA(img, BGRcolor):
@@ -55,22 +65,27 @@ def blend_transparent(fore_img, bkg_img):
     """
     blend_transparent(fore_img, bkg_img)
     Blend a foreground image with alpha channel over
-    a background. Assumes both images are already in
-    BGRA format (4 channels)
+    a background. Assumes foreground image is already
+    in BGRA format (4 channels)
     """
 
+    # get BGR channels from fore and bkg images
     fore_BGR = fore_img[:, :, :3]
-    fore_mask = fore_img[:, :, 3]
-    bkg_mask = 255 - fore_mask
     back_BGR = bkg_img[:, :, :3]
 
-    # convert masks to 3-channel
-    bkg_mask = cv2.cvtColor(bkg_mask, cv2.COLOR_GRAY2BGR)
-    fore_mask = cv2.cvtColor(fore_mask, cv2.COLOR_GRAY2BGR)
+    # prepare both masks based on alpha channel of fore_img
+    fore_mask = fore_img[:, :, 3]
+    bkg_mask = 255 - fore_mask
 
+    # convert masks to 3-channel
+    fore_mask = cv2.cvtColor(fore_mask, cv2.COLOR_GRAY2BGR)
+    bkg_mask = cv2.cvtColor(bkg_mask.astype('uint8'), cv2.COLOR_GRAY2BGR)
+
+    # mask
     bkg = (1/255.0**2) * back_BGR * bkg_mask
     fore = (1/255.0**2) * fore_BGR * fore_mask
 
+    # blend
     blended = np.uint8(cv2.addWeighted(fore, 255.0, bkg, 255.0, 0.0))
     return blended
 
@@ -79,57 +94,43 @@ if __name__ == "__main__":
 
     frame = cv2.imread("./assets/icons/test.jpg")
     frame = cv2.resize(frame, (360, 240))
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
 
-    pos = [frame.shape[0] // 2 - 15, frame.shape[1] // 2 - 15]
-    pos2 = [2 * frame.shape[0] // 3 - 15, frame.shape[1] // 3 - 15]
+    icon_size = (60, 200)
+    centre_pos = [(frame.shape[0] - icon_size[0]) // 2,
+                  (frame.shape[1] - icon_size[1]) // 2]
+MErge
+COLOR1 = np.array([255.0, 0.0, 255.0])  # pink
+COLOR2 = np.array([0.0, 255.0, 255.0])  # yellow
+COLOR3 = np.array([0.0, 255.0, 0.0])  # green
+COLOR4 = np.array([255.0, 0.0, 0.0])  # blue
 
-    icon_size = 50
+# load icons in BGRA format (4 channel)
+bat_icon = cv2.imread('./assets/icons/battery.png', -1)
+arrow_icon = cv2.imread('./assets/icons/arrow-up-short.png', -1)
+ok_icon = cv2.imread('./assets/icons/bullseye.png', -1)
 
-    bat_icon_url = './assets/icons/battery.png'
-    bullseye_icon_url = './assets/icons/bullseye.png'
-    up_icon_url = './assets/icons/arrow-up-short.png'
+frame = icon_overlay(frame, arrow_icon, (0, 200), COLOR3, (30, 30))
+cv2.imshow("Arrow", frame)
 
-    COLOR1 = np.array([0.0, 255.0, 255.0])/255.0  # yellow
-    COLOR2 = np.array([255.0, 0.0, 255.0])/255.0  # pink
-    COLOR3 = np.array([0.0, 255.0, 0.0])/255.0  # green
-    COLOR4 = np.array([255.0, 0.0, 0.0])/255.0  # blue
+frame = icon_overlay(frame, ok_icon, centre_pos, COLOR4, icon_size)
+cv2.imshow("Ok", frame)
 
-    ovl_bat = icon_overlay(
-        bat_icon_url, 30, [0, 10], frame.shape, COLOR1)
-    frame = blend_transparent(ovl_bat, frame)
-    cv2.imshow("Battery", frame)
+ frame = icon_overlay(frame, bat_icon, (frame.shape[0]-bat_icon.shape[0],
+                                         frame.shape[1]-bat_icon.shape[1]),
+                       COLOR2)
+  cv2.imshow("Battery", frame)
 
-    ovl_arrow = icon_overlay(
-        up_icon_url, icon_size, pos2, frame.shape, COLOR2)
-    frame = blend_transparent(ovl_arrow, frame)
-    cv2.imshow("Arrow", frame)
-
-    ovl_ok = icon_overlay(
-        bullseye_icon_url, icon_size, pos, frame.shape, COLOR3)
-    frame = blend_transparent(ovl_ok, frame)
-    cv2.imshow("Ok", frame)
-
-    while True:
+   while True:
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
     cv2.destroyAllWindows()
 
-    """
+    """ other icons
     bat_icon_url = './assets/icons/battery.png'
     down_icon_url = './assets/icons/arrow-down-short.png'
     up_icon_url = './assets/icons/arrow-up-short.png'
     left_icon_url = './assets/icons/arrow-left-short.png'
     right_icon_url = './assets/icons/arrow-right-short.png'
     bullseye_icon_url = './assets/icons/bullseye.png'
-    ovl_up = icon_overlay(
-        up_icon_url, arrow_size, pos, frame.shape, 2)
-    ovl_down = icon_overlay(
-        down_icon_url, arrow_size, pos, frame.shape, 2)
-    ovl_right = icon_overlay(
-        right_icon_url, arrow_size, pos, frame.shape, 2)
-    ovl_left = icon_overlay(
-        left_icon_url, arrow_size, pos, frame.shape, 2)
-    ovl_ok = icon_overlay(
-        bullseye_icon_url, arrow_size, pos, frame.shape, 1)
     """
