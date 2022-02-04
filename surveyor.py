@@ -4,8 +4,7 @@ import cv2
 from djitellopy import tello
 import keypress_module as kp
 import time
-import datetime
-from icon_overlay import icon_overlay
+from utils import process_frame
 
 
 def get_keyboard_input():
@@ -49,36 +48,6 @@ def get_keyboard_input():
     return [left_right, bk_fwd, down_up, cc_c_yaw]
 
 
-def process_frame(frame, drone):
-    # resize
-    frame = cv2.resize(frame, (360, 240))
-    # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
-
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = .35
-    thickness = 1  # in pixels
-    color = (0.0, 255.0, 255.0)  # Yellow in BGR
-
-    # battery status
-    loc_bat = (290, 223)
-    text_bat = f"{drone.get_battery()}%"
-
-    battery_icon = cv2.imread('./assets/icons/battery.png', -1)
-    frame = icon_overlay(frame, battery_icon,
-                         [200, 283], color, [40, 40])
-
-    frame = cv2.putText(frame, text_bat, loc_bat, font,
-                        font_scale, color, thickness, cv2.LINE_AA)
-
-    # datestamp
-    loc_date = (10, 223)  # in pixels
-    text_date = f"{datetime.datetime.now().isoformat(timespec='milliseconds')}"
-    frame = cv2.putText(frame, text_date, loc_date, font,
-                        font_scale, color, thickness, cv2.LINE_AA)
-
-    return frame
-
-
 if __name__ == "__main__":
 
     # initializations
@@ -105,7 +74,7 @@ if __name__ == "__main__":
         # get frame
         frame = drone.get_frame_read().frame
         # display processed frame
-        cv2.imshow("Frame", process_frame(frame, drone))
+        cv2.imshow("Frame", process_frame(frame, drone.get_battery()))
         cv2.waitKey(1)
 
     drone.streamoff()

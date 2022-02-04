@@ -1,15 +1,15 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import cv2
 import numpy as np
 
 
-def icon_overlay(frame, icon, icon_position=(0, 0), color=False, icon_size=False):
+def icon_overlay(frame, icon, icon_pos=(0, 0), color=False, icon_size=False):
     """
-    `frame = icon_overlay(frame, icon, icon_position=(x,y), color, icon_size=(h,w))`
+    `frame = icon_overlay(frame, icon, icon_pos=(x,y), color, icon_size=(h,w))`
     assume `icon` is BGRA format (4 channels)
     if provided, resize it to `icon_size` and recolor it to `color`
-    and place it in position `pos` (defaults to (0,0))
+    and place it in position `icon_pos` (defaults to (0,0))
     in a transparent overlay of size `frame.shape`.
     Return blend of this overlay with `frame` in BGRA format (4 channels).
     """
@@ -29,7 +29,7 @@ def icon_overlay(frame, icon, icon_position=(0, 0), color=False, icon_size=False
         icon = recolor_BGRA(icon, color)
 
     # position
-    icon_x, icon_y = icon_position
+    icon_x, icon_y = icon_pos
     icon_h, icon_w, _ = icon.shape
     h, w, _ = frame.shape
     overlay = np.zeros((h, w, 4), dtype='uint8')
@@ -99,38 +99,38 @@ if __name__ == "__main__":
     icon_size = (60, 200)
     centre_pos = [(frame.shape[0] - icon_size[0]) // 2,
                   (frame.shape[1] - icon_size[1]) // 2]
-MErge
-COLOR1 = np.array([255.0, 0.0, 255.0])  # pink
-COLOR2 = np.array([0.0, 255.0, 255.0])  # yellow
-COLOR3 = np.array([0.0, 255.0, 0.0])  # green
-COLOR4 = np.array([255.0, 0.0, 0.0])  # blue
 
-# load icons in BGRA format (4 channel)
-bat_icon = cv2.imread('./assets/icons/battery.png', -1)
-arrow_icon = cv2.imread('./assets/icons/arrow-up-short.png', -1)
-ok_icon = cv2.imread('./assets/icons/bullseye.png', -1)
+    COLOR1 = np.array([255.0, 0.0, 255.0])  # pink
+    COLOR2 = np.array([0.0, 255.0, 255.0])  # yellow
+    COLOR3 = np.array([0.0, 255.0, 0.0])  # green
+    COLOR4 = np.array([255.0, 0.0, 0.0])  # blue
 
-frame = icon_overlay(frame, arrow_icon, (0, 200), COLOR3, (30, 30))
-cv2.imshow("Arrow", frame)
+    # load icons in BGRA format (4 channel)
+    bat_icon = cv2.imread('./assets/icons/battery.png', -1)
+    arrow_icon = cv2.imread('./assets/icons/arrow-up-short.png', -1)
+    ok_icon = cv2.imread('./assets/icons/bullseye.png', -1)
 
-frame = icon_overlay(frame, ok_icon, centre_pos, COLOR4, icon_size)
-cv2.imshow("Ok", frame)
+    frame = icon_overlay(frame, arrow_icon, (0, 200), COLOR3, (30, 30))
+    cv2.imshow("Arrow", frame)
 
- frame = icon_overlay(frame, bat_icon, (frame.shape[0]-bat_icon.shape[0],
-                                         frame.shape[1]-bat_icon.shape[1]),
-                       COLOR2)
-  cv2.imshow("Battery", frame)
+    frame = icon_overlay(frame, ok_icon, centre_pos, COLOR4, icon_size)
+    cv2.imshow("Ok", frame)
 
-   while True:
+    frame = icon_overlay(frame, bat_icon, (frame.shape[0]-bat_icon.shape[0],
+                                           frame.shape[1]-bat_icon.shape[1]),
+                         COLOR2)
+    cv2.imshow("Battery", frame)
+
+    while True:
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
-    cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
 
-    """ other icons
-    bat_icon_url = './assets/icons/battery.png'
-    down_icon_url = './assets/icons/arrow-down-short.png'
-    up_icon_url = './assets/icons/arrow-up-short.png'
-    left_icon_url = './assets/icons/arrow-left-short.png'
-    right_icon_url = './assets/icons/arrow-right-short.png'
-    bullseye_icon_url = './assets/icons/bullseye.png'
-    """
+        """ other icons
+        bat_icon_url = './assets/icons/battery.png'
+        down_icon_url = './assets/icons/arrow-down-short.png'
+        up_icon_url = './assets/icons/arrow-up-short.png'
+        left_icon_url = './assets/icons/arrow-left-short.png'
+        right_icon_url = './assets/icons/arrow-right-short.png'
+        bullseye_icon_url = './assets/icons/bullseye.png'
+        """
