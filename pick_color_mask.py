@@ -3,21 +3,12 @@
 import cv2
 import numpy as np
 
+from utils import reduce_frame
 from djitellopy import tello
 
 
 def empty(args):
     pass
-
-
-def reduce_frame(img, desired_shape):
-    scale_percent = min(
-        desired_shape[0]/img.shape[0], desired_shape[1]/img.shape[1])
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
-    dim = (width, height)
-    resized_img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-    return resized_img
 
 
 def pick_color_mask(video_source, video_link, frame_size=-1,
