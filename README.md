@@ -236,6 +236,11 @@ Rotation:
 Translation: PID to keep line centered in the image
 
 
+## `utils.py` - auxiliary functions
+
+- `countdown()` - speak a countdown
+- `process_frame()` - show an overlay with a timestamps and battery status
+- `reduce_frame()` - resize. Obsolete, to be eliminated
 
 ## TO DO
 
