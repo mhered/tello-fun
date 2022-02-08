@@ -1,6 +1,6 @@
 # Tello fun
 
-Today I got a super present: the Tello drone. The Boost combo kit includes one drone, some spares, three batteries and a charger. The packaging is compact and effective, more functional than luxurious. The drone itself is beautifully finished, sporting a vision positioning system and onboard camera capable of 5 Mpixel shots and 720p live video streaming, as well as neat safety features such as propeller guards and a rubber landing gear. Flight time is about 13'.
+Today I got a super present: the Tello drone. The [Boost combo kit](https://store.dji.com/product/tello?vid=45701&set_region=US&from=store-nav) includes one drone, some spares, three batteries and a charger. The packaging is compact and effective, more functional than luxurious. The drone itself is beautifully finished, sporting a vision positioning system and onboard camera capable of 5 Mpixel shots and 720p live video streaming, as well as neat safety features such as propeller guards and a rubber landing gear. Flight time is about 13'.
 
 I plugged the batteries to top them up. It took about 20' to see the solid green light, and I used this time to visit the [official Tello website](https://www.ryzerobotics.com/), watch some of the quickstart [videos](https://www.ryzerobotics.com/tello/videos) and download the documentation:
 
