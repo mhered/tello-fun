@@ -9,11 +9,11 @@ from utils import countdown, process_frame, reduce_frame
 
 # parameters
 THRESHOLD = .80  # % of detection in area to set to 1
-TRANS_GAIN = .33  # translation gain, the higher the more sensitive
+TRANS_GAIN = .2  # translation gain, the higher the more sensitive
 SENSORS = 3  # number of areas for track sensing
-ROTA_VALS = [-25, -15, 0, 15, 25]  # rotation gain, match with SENSORS
-FWD_SPEED = 15  # default fwd speed
-video_source = "WEBCAM"
+ROTA_VALS = [-20, -10, 0, 10, 20]  # rotation gain, match with SENSORS
+FWD_SPEED = 10  # default fwd speed
+video_source = "DRONE"
 
 # Functions definition
 
@@ -30,6 +30,7 @@ def get_lateral_offset(mask, frame, decorate_frame=True):
     RED = (0.0, 0.0, 255.0)
 
     cx = 0.0
+    h, w, c = frame.shape
     contours, hierarchy = cv2.findContours(
         mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     if len(contours) != 0:
@@ -37,14 +38,14 @@ def get_lateral_offset(mask, frame, decorate_frame=True):
         x_r, y_r, w_r, h_r = cv2.boundingRect(largest_area_detected)
         cx = x_r + w_r//2
         cy = y_r + h_r//2
-        if decorate_frame:
+        if decorate_frame is True:
             # draw boundary of track detected
             cv2.drawContours(frame, largest_area_detected, -1, PINK, 3)
             # draw centroid
             cv2.circle(frame, (cx, cy), 5, GREEN, cv2.FILLED)
             # draw bounding rectangle
             # cv2.rectangle(frame, (x_r, y_r), (x_r+w_r, y_r+h_r), RED, 2)
-            h, w, c = frame.shape
+
             # draw arrow
             cv2.arrowedLine(frame, (w//2, h//2, ), (cx, h//2,), GREEN, 1)
     print("Offset:", w//2-cx)
@@ -158,12 +159,13 @@ if __name__ == "__main__":
     lower_threshold = [25, 10, 179]
     upper_threshold = [117,  54, 255]
     """
-    # HSV values from Tello for Durruti - night
-    lower_threshold = [94,   0, 189]
-    upper_threshold = [179, 255, 255]
 
     # HSV values test sheet
     lower_threshold = [115,  70,   0]
+    upper_threshold = [179, 255, 255]
+
+    # HSV values from Tello for Durruti - night
+    lower_threshold = [94,   0, 189]
     upper_threshold = [179, 255, 255]
 
     # Call pick_color_mask to fine-tune initial values
@@ -197,8 +199,8 @@ if __name__ == "__main__":
         text_bat = "NA"
         if video_source == "DRONE":
             drone.send_rc_control(left_right, fwd_speed, up_down, yaw)
-            text_bat = drone.get_battery()
-        # show images
+            text_bat = f"{drone.get_battery()}%"
+        # show images. Why it does not work with drone.get_battery()?
         frame = process_frame(frame, text_bat)
         cv2.imshow("Output", frame)
         # cv2.imshow("Mask", mask)
