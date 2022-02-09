@@ -138,9 +138,10 @@ if __name__ == "__main__":
 
     # color thresholds
 
-    # add an env file to store the values in XML?
+    # TO DO: add an env file to store the values in XML?
     # read values from XML and run color calibration
     # only on request or if XML params not present
+
     # HSV values for no filter
     """
     lower_threshold = [0, 0, 0]
@@ -148,6 +149,7 @@ if __name__ == "__main__":
     """
 
     # picked manually
+
     # HSV values for Cossio
     """
     lower_threshold = [85, 13, 177]
@@ -189,7 +191,6 @@ if __name__ == "__main__":
 
         # resize preserving aspect ratio
         frame = cv2.resize(frame, (frame_width, frame_height), interpolation=cv2.INTER_AREA)
-        # frame = reduce_frame(frame, (frame_width, frame_height))
 
         mask = thresholding(frame, lower_threshold, upper_threshold)
         cx, frame = get_lateral_offset(mask, frame)  # for translation
@@ -200,7 +201,7 @@ if __name__ == "__main__":
         if video_source == "DRONE":
             drone.send_rc_control(left_right, fwd_speed, up_down, yaw)
             text_bat = f"{drone.get_battery()}%"
-        # show images. Why it does not work with drone.get_battery()?
+        # show images
         frame = process_frame(frame, text_bat)
         cv2.imshow("Output", frame)
         # cv2.imshow("Mask", mask)
