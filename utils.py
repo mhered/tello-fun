@@ -21,7 +21,7 @@ def countdown(n):
 
 def process_frame(frame, text_bat):
     # resize
-    frame = cv2.resize(frame, (360, 240))
+    # frame = cv2.resize(frame, (360, 240))
     # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
 
     font = cv2.FONT_HERSHEY_SIMPLEX
