@@ -31,7 +31,7 @@ I searched the pretty active community in https://tellopilots.com/ and http://pr
 
 ## Programming the Tello
 
-Thats where the real fun is. Official support is for Scratch but I there are plenty of community-developed alterantives: the iOS app [TelloFpv](https://apps.apple.com/us/app/tellofpv/id1545864950) a [ROS driver](http://wiki.ros.org/tello_driver), and unofficial python libraries such as [TelloPy library](https://github.com/hanyazou/TelloPy) , [Tello-Python](https://github.com/dji-sdk/Tello-Python) or [DJITelloPy](https://github.com/damiafuentes/DJITelloPy) by damiafuentes, used in [this video tutorial about drone programming by Murtaza](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s).
+That's where the real fun is. Official support is for Scratch but there are plenty of community-developed alternatives, e.g the iOS app [TelloFpv](https://apps.apple.com/us/app/tellofpv/id1545864950), a [ROS driver](http://wiki.ros.org/tello_driver), or several unofficial python libraries such as [TelloPy library](https://github.com/hanyazou/TelloPy), [Tello-Python](https://github.com/dji-sdk/Tello-Python) or [DJITelloPy](https://github.com/damiafuentes/DJITelloPy) by damiafuentes, used in [this video tutorial about drone programming by Murtaza](https://www.youtube.com/watch?v=LmEcyQnfpDA&t=1282s).
 
 ## Installations
 
